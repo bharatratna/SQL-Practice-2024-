@@ -76,7 +76,7 @@ Finally, for all other cases, it decrements Id by 1.
 
 */ 
 
-Method 5 :
+Method 4 :
 
 
 Select case when Id%2=1 and Id<(select max(Id) from Family ) then  lead(Members,1) over(order by Id) 
