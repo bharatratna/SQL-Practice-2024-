@@ -1,1 +1,88 @@
 
+
+
+--Problem Statement : Interchange  seat Id for even and odd postion members except the last odd position member. 
+/* Table Family */
+--Method 1 : 
+create table Family(Id Int IDENTITY(1,1) PRIMARY KEY , Mewmbers varchar(50))
+
+-- Rename column Mewmbers to new column name
+EXEC sp_rename 'Family.Mewmbers',  'Members', 'COLUMN';
+
+
+
+-- Inset data into Family 
+insert into Family(Members) values ('Husband'),('Wife'),('Son'),('Daughter'),('Brother')
+
+Select * from Family
+
+
+
+With Family_Set as (
+
+
+Select New_Id as Id ,Members
+
+from (
+
+Select *,Id-1 as New_Id from Family where Id%2=0 
+union all 
+Select *, case when   Id+1  IN (Select Id from Family)  Then Id+1 else Id  end as New_Id from Family where Id%2<>0 
+) a
+
+)
+
+Select * from Family_Set
+
+
+-------------------------
+/*
+Combined Explanation:
+First Query: Displays the entire Family table.
+Second Query: Displays all columns and an additional New_Id column for even Ids (which is Id - 1).
+Third Query: Displays all columns and an additional New_Id column for odd Ids (which is Id + 1 if Id + 1 exists in the table, otherwise it remains as Id).
+
+*/
+
+--Method 2 : 
+
+Select Members ,case  
+when id = (Select max(id) from Family) and id%2=1 then id 
+when Id%2=1 then (id+1) 
+else id-1 
+
+end as Id from Family order by Id
+
+Method 3 : Wrong output 
+
+Select Members ,case  when Id%2=1 then (id+1)  
+when id = (Select max(id) from Family) and id%2=1 then id 
+
+else id-1 
+
+end as Id from Family order by Id
+
+/ *
+Why the Outputs Differ:
+Order of Conditions: The main difference lies in the order of the conditions within the CASE statement.
+Query 1:
+It first checks if the Id is the maximum and odd. If true, New_Id is set to Id, and it does not proceed to the next conditions.
+If the first condition is false, it checks if the Id is odd and increments it by 1 if true.
+Finally, for all other cases, it decrements Id by 1.
+
+Query 2:
+It first checks if the Id is odd and increments it by 1 if true. This condition is checked before verifying if the Id is the maximum and odd.
+If the Id is not odd, it checks if the Id is the maximum and odd. However, this condition will never be true because the first condition already handles all odd Ids.
+Finally, for all other cases, it decrements Id by 1.
+
+*/ 
+
+Method 4 :
+
+
+Select case when Id%2=1 and Id<(select max(Id) from Family ) then  lead(Members,1) over(order by Id) 
+when Id%2=0 then lag(Members) over (order by Id) 
+else Members end as Members 
+,Id from Family 
+
+
