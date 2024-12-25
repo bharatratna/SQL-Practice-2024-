@@ -1,0 +1,33 @@
+Write an SQL query to update the Job_Role column in the JobSkills table to fill in the missing (NULL) values.
+The missing values should be filled with the most recent non-NULL value in the Job_Role column based on the Row_ID order.
+
+Given the following input table (JobSkills):
+
+Row_ID	Job_Role	Skills
+1	Data Engineer	SQL
+2	NULL	Python
+3	NULL	AWS
+4	NULL	Snowflake
+5	NULL	Apache Spark
+6	Web Developer	Java
+7	NULL	HTML
+8	NULL	CSS
+9	Data Scientist	Python
+10	NULL	Machine Learning
+11	NULL	Deep Learning
+12	Data Scientist	Tableau
+The output after updating should be:
+
+Row_ID	Job_Role	Skills
+1	Data Engineer	SQL
+2	Data Engineer	Python
+3	Data Engineer	AWS
+4	Data Engineer	Snowflake
+5	Data Engineer	Apache Spark
+6	Web Developer	Java
+7	Web Developer	HTML
+8	Web Developer	CSS
+9	Data Scientist	Python
+10	Data Scientist	Machine Learning
+11	Data Scientist	Deep Learning
+12	Data Scientist	Tableau
